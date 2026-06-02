@@ -1,0 +1,8 @@
+target/
+*.class
+*.jar
+.mvn/
+.idea/
+*.iml
+application-local.properties
+.env
