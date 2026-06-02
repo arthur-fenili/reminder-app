@@ -1,0 +1,51 @@
+name: Build and Deploy to DisCloud
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          DB_URL=${{ secrets.DB_URL }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+          PIX_KEY=${{ secrets.PIX_KEY }}
+          REMINDER_CRON=${{ secrets.REMINDER_CRON }}
+          EOF
+
+      - name: Create deployment zip
+        run: |
+          mkdir deploy
+          cp target/reminder-app.jar deploy/
+          cp discloud.config deploy/
+          cp .env deploy/
+          cd deploy && zip -r ../reminder-app.zip .
+
+      - name: Deploy to DisCloud
+        uses: discloud/github-action@v2
+        with:
+          api_token: ${{ secrets.DISCLOUD_TOKEN }}
+          app_id: youtube-reminder.discloud.app
+          zip_file: reminder-app.zip
