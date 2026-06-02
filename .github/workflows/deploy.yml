@@ -37,7 +37,7 @@ jobs:
 
       - name: Create deployment zip
         run: |
-          mkdir deploy
+          mkdir -p deploy
           cp target/reminder-app.jar deploy/
           cp discloud.config deploy/
           cp .env deploy/
