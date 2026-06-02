@@ -44,8 +44,8 @@ jobs:
           cd deploy && zip -r ../reminder-app.zip .
 
       - name: Deploy to DisCloud
-        uses: discloud/github-action@v2
+        uses: discloud/deploy-action@v1
         with:
-          api_token: ${{ secrets.DISCLOUD_TOKEN }}
+          token: ${{ secrets.DISCLOUD_TOKEN }}
           app_id: youtube-reminder.discloud.app
-          zip_file: reminder-app.zip
+          glob: reminder-app.zip
