@@ -35,17 +35,16 @@ jobs:
             echo "REMINDER_CRON=${{ secrets.REMINDER_CRON }}"
           } > .env
 
-      - name: Create deployment zip
+      - name: Prepare deployment folder
         run: |
           mkdir -p deploy
           cp target/reminder-app.jar deploy/
           cp discloud.config deploy/
           cp .env deploy/
-          cd deploy && zip -r ../reminder-app.zip .
 
       - name: Deploy to DisCloud
         uses: discloud/deploy-action@v1
         with:
           token: ${{ secrets.DISCLOUD_TOKEN }}
           app_id: youtube-reminder
-          glob: reminder-app.zip
+          glob: deploy/**
