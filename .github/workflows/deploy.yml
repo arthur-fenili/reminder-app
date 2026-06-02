@@ -25,15 +25,15 @@ jobs:
 
       - name: Create .env file
         run: |
-          cat <<EOF > .env
-          DB_URL=${{ secrets.DB_URL }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-          PIX_KEY=${{ secrets.PIX_KEY }}
-          REMINDER_CRON=${{ secrets.REMINDER_CRON }}
-          EOF
+          {
+            echo "DB_URL=${{ secrets.DB_URL }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}"
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
+            echo "PIX_KEY=${{ secrets.PIX_KEY }}"
+            echo "REMINDER_CRON=${{ secrets.REMINDER_CRON }}"
+          } > .env
 
       - name: Create deployment zip
         run: |
