@@ -3,6 +3,7 @@ package com.ytreminder.controller;
 import com.ytreminder.model.Member;
 import com.ytreminder.repository.MemberRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,7 +22,10 @@ public class MembersController {
     }
 
     @GetMapping
-    public List<Member> getAll() {
+    public List<Member> getAll(@RequestParam(required = false) boolean onlyActive) {
+        if (onlyActive) {
+            return memberRepository.findByActiveTrue();
+        }
         return memberRepository.findAll();
     }
 
