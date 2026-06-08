@@ -30,9 +30,17 @@ public class ReminderJob {
     }
 
     @Scheduled(cron = "${reminder.cron}", zone = "America/Sao_Paulo")
-    public void execute() {
-        log.info("Iniciando job de lembrete");
+    public void executeScheduled() {
+        log.info("Trigger automático do scheduler iniciado");
+        run();
+    }
 
+    public void executeManual() {
+        log.info("Trigger manual iniciado via API");
+        run();
+    }
+
+    private void run() {
         List<Member> members = memberRepository.findByActiveTrue();
 
         if (members.isEmpty()) {

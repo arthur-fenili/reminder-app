@@ -4,6 +4,8 @@ import com.ytreminder.model.BillingRecord;
 import com.ytreminder.model.BillingStatus;
 import com.ytreminder.repository.BillingRecordRepository;
 import com.ytreminder.service.ReminderJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,6 +18,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/billing")
 public class BillingController {
+
+    private static final Logger log = LoggerFactory.getLogger(BillingController.class);
 
     private final BillingRecordRepository billingRecordRepository;
     private final ReminderJob reminderJob;
@@ -31,6 +35,8 @@ public class BillingController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize) {
 
+        log.info("GET /api/billing/history — memberId={}, page={}, pageSize={}", memberId, page, pageSize);
+
         var pageable = PageRequest.of(page - 1, pageSize, Sort.by("sentAt").descending());
 
         Page<BillingRecord> result = memberId != null
@@ -38,6 +44,8 @@ public class BillingController {
                 : billingRecordRepository.findAll(pageable);
 
         var records = result.getContent().stream().map(BillingRecordDto::from).toList();
+
+        log.info("GET /api/billing/history — {} registro(s) retornado(s) de {} no total", records.size(), result.getTotalElements());
 
         return ResponseEntity.ok(Map.of(
                 "total", result.getTotalElements(),
@@ -49,7 +57,8 @@ public class BillingController {
 
     @PostMapping("/trigger")
     public ResponseEntity<Map<String, String>> triggerManual() {
-        reminderJob.execute();
+        log.info("POST /api/billing/trigger — trigger manual recebido");
+        reminderJob.executeManual();
         return ResponseEntity.ok(Map.of("message", "Job executado manualmente com sucesso."));
     }
 
